@@ -1,28 +1,24 @@
 import requests
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import time
 import json
 import logging
-import os
-import sys
 from pathlib import Path
 
 _log = logging.getLogger(__name__)
-with open(f"/home/ubuntu/sailbuoy/sb_secrets.json") as json_file:
+with open(f"sb_secrets.json") as json_file:
     secrets = json.load(json_file)
 data_dir = Path("/home/ubuntu/sailbuoy/nrt")
 
 
 def download_sailbuoy(sb_id):
     _log.info("start sailbuoy download process")
-    chrome_options = Options()
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    driver = webdriver.Chrome(
-        executable_path="/home/ubuntu/sailbuoy/chromedriver", options=chrome_options
-    )
+    firefox_options = FirefoxOptions()
+    firefox_options.add_argument("--headless")
+    service = FirefoxService(executable_path="/snap/bin/geckodriver")
+    driver = webdriver.Firefox(service=service, options=firefox_options)
     _log.info("configured driver")
     driver.get("https://ids.sailbuoy.no")  # load webpage
     driver.find_element("id", "UserName").send_keys(secrets["sb_user"])
@@ -58,7 +54,7 @@ def download_sailbuoy(sb_id):
 
 if __name__ == "__main__":
     logging.basicConfig(
-        filename="/home/ubuntu/sailbuoy/voto_add_sailbuoy.log",
+        filename="voto_add_sailbuoy.log",
         filemode="a",
         format="%(asctime)s %(levelname)-8s %(message)s",
         level=logging.INFO,
