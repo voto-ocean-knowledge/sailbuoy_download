@@ -13,7 +13,7 @@ with open(f"sb_secrets.json") as json_file:
 data_dir = Path("/home/pipeline/sailbuoy_download/nrt")
 
 
-def download_sailbuoy(sb_id):
+def download_sailbuoy(sb_id_list):
     _log.info("start sailbuoy download process")
     firefox_options = FirefoxOptions()
     firefox_options.add_argument("--headless")
@@ -36,20 +36,21 @@ def download_sailbuoy(sb_id):
         session.cookies.set(cookie["name"], cookie["value"])
 
     _log.info("start downloads")
-    download_link1 = f"https://ids.sailbuoy.no/GenCustomData/_DownloadAllAsCSV?instrName={sb_id}A"  # Autopilot
-    download_link2 = f"https://ids.sailbuoy.no/GenCustomData/_DownloadAllAsCSV?instrName={sb_id}D"  # Payload
-    response1 = session.get(download_link1)
-    response2 = session.get(download_link2)
-    # at this point, the downloadable csv files are stored in the response object
-    _log.info("write data to file")
-    if not data_dir.exists():
-        data_dir.mkdir(parents=True)
-    with open(data_dir / f"{sb_id}_nav.csv", "w") as file:
-        file.write(str(response1.text))
-        _log.info(f"wrote {sb_id}_nav.csv")
-    with open(data_dir / f"{sb_id}_pld.csv", "w") as file:
-        file.write(str(response2.text))
-        _log.info(f"wrote {sb_id}_pld.csv")
+    for sb_id in sb_id_list:
+        download_link1 = f"https://ids.sailbuoy.no/GenCustomData/_DownloadAllAsCSV?instrName={sb_id}A"  # Autopilot
+        download_link2 = f"https://ids.sailbuoy.no/GenCustomData/_DownloadAllAsCSV?instrName={sb_id}D"  # Payload
+        response1 = session.get(download_link1)
+        response2 = session.get(download_link2)
+        # at this point, the downloadable csv files are stored in the response object
+        _log.info("write data to file")
+        if not data_dir.exists():
+            data_dir.mkdir(parents=True)
+        with open(data_dir / f"{sb_id}_nav.csv", "w") as file:
+            file.write(str(response1.text))
+            _log.info(f"wrote {sb_id}_nav.csv")
+        with open(data_dir / f"{sb_id}_pld.csv", "w") as file:
+            file.write(str(response2.text))
+            _log.info(f"wrote {sb_id}_pld.csv")
 
 
 if __name__ == "__main__":
@@ -60,9 +61,9 @@ if __name__ == "__main__":
         level=logging.INFO,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    download_sailbuoy("SB2016")
-    download_sailbuoy("SB2017")
-    download_sailbuoy("SB2120")
-    download_sailbuoy("SB2121")
+    download_sailbuoy(["SB2016"
+                       "SB2017",
+                       "SB2120",
+                       "SB2121",])
 
 _log.info("Finished download of sailbuoy data\n")
