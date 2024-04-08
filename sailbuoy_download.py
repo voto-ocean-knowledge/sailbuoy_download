@@ -10,7 +10,7 @@ from pathlib import Path
 _log = logging.getLogger(__name__)
 with open(f"sb_secrets.json") as json_file:
     secrets = json.load(json_file)
-data_dir = Path("/home/ubuntu/sailbuoy/nrt")
+data_dir = Path("/home/pipeline/sailbuoy_download/nrt")
 
 
 def download_sailbuoy(sb_id):
