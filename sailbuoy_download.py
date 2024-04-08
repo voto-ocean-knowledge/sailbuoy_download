@@ -61,7 +61,7 @@ if __name__ == "__main__":
         level=logging.INFO,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-    download_sailbuoy(["SB2016"
+    download_sailbuoy(["SB2016",
                        "SB2017",
                        "SB2120",
                        "SB2121",])
