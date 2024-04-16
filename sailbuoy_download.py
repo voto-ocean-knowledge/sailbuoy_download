@@ -42,7 +42,7 @@ def download_sailbuoy(sb_id_list):
         response1 = session.get(download_link1)
         response2 = session.get(download_link2)
         # at this point, the downloadable csv files are stored in the response object
-        _log.info("write data to file")
+        _log.info(f"write {sb_id} to file")
         if not data_dir.exists():
             data_dir.mkdir(parents=True)
         with open(data_dir / f"{sb_id}_nav.csv", "w") as file:
@@ -51,6 +51,12 @@ def download_sailbuoy(sb_id_list):
         with open(data_dir / f"{sb_id}_pld.csv", "w") as file:
             file.write(str(response2.text))
             _log.info(f"wrote {sb_id}_pld.csv")
+        extra_pld_url = f"https://ids.sailbuoy.no/GenCustomData/_DownloadAllAsCSV?instrName={sb_id}D2"
+        extra_response = session.get(extra_pld_url)
+        if extra_response.status_code == 200:
+            _log.info(f"extra pld file {sb_id}_pld_2.csv")
+            with open(data_dir / f"{sb_id}_pld_2.csv", "w") as file:
+                file.write(str(extra_response.text))
 
 
 if __name__ == "__main__":
