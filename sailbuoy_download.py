@@ -57,6 +57,7 @@ def download_sailbuoy(sb_id_list):
             _log.info(f"extra pld file {sb_id}_pld_2.csv")
             with open(data_dir / f"{sb_id}_pld_2.csv", "w") as file:
                 file.write(str(extra_response.text))
+        session.close()
 
 
 if __name__ == "__main__":
